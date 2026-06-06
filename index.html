@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPS Tracker Lillehammer</title>
+<title>Bar Tracker Lillehammer</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a1d27">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="GPS Tracker">
+<meta name="apple-mobile-web-app-title" content="Bar Tracker">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
@@ -30,7 +30,6 @@
   .marker-row:last-child { border-bottom: none; }
   .marker-row.reached { background: #0f2918; }
   .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; transition: background 0.4s, box-shadow 0.4s; }
-  .dot.red { background: #ef4444; }
   .dot.blue { background: #3b82f6; }
   .dot.green { background: #22c55e; box-shadow: 0 0 8px #22c55e66; }
   .marker-name { font-size: 13px; font-weight: 500; color: #cbd5e1; flex: 1; }
@@ -46,7 +45,7 @@
 <body>
 
 <div id="header">
-  <h1>📍 GPS Tracker – Lillehammer</h1>
+  <h1>🍺 Bar Tracker – Lillehammer</h1>
   <div id="gps-status">
     <div id="gps-dot"></div>
     <span id="gps-text">Henter posisjon…</span>
@@ -56,8 +55,6 @@
 <div id="map"></div>
 
 <div id="panel">
-  <div class="section-header"><span>📌</span> GPS-punkter</div>
-  <div id="list-gps"></div>
   <div class="section-header"><span>🍺</span> Barer &amp; Nattklubber</div>
   <div id="list-bars"></div>
   <div id="error-msg"></div>
@@ -66,11 +63,6 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const GPS_POINTS = [
-  { id:"g1", name:"Punkt 1", lat:61.117189391299775, lon:10.464565025004918 },
-  { id:"g2", name:"Punkt 2", lat:61.117226018834366, lon:10.46634523282882  },
-  { id:"g3", name:"Punkt 3", lat:61.11486228921843,  lon:10.464810138284342 },
-];
 const BARS = [
   { id:"b1", name:"Heim Lillehammer",     sub:"Gastropub · Storgata 84",    lat:61.117152, lon:10.464584 },
   { id:"b2", name:"Kjøpstaden Sport bar", sub:"Sportsbar · Storgata 83",    lat:61.117338, lon:10.465323 },
@@ -96,26 +88,21 @@ function makeIcon(color, emoji) {
   return L.divIcon({ className:'', html:svg, iconSize:[28,36], iconAnchor:[14,36], popupAnchor:[0,-36] });
 }
 const icons = {
-  gpsRed:   makeIcon('#ef4444','📍'),
-  gpsGreen: makeIcon('#22c55e','✅'),
   barBlue:  makeIcon('#3b82f6','🍺'),
   barGreen: makeIcon('#22c55e','✅'),
 };
-const gpsMarkers = GPS_POINTS.map(p =>
-  L.marker([p.lat, p.lon], { icon: icons.gpsRed }).addTo(map).bindPopup(`<b>${p.name}</b>`)
-);
 const barMarkers = BARS.map(b =>
   L.marker([b.lat, b.lon], { icon: icons.barBlue }).addTo(map).bindPopup(`<b>${b.name}</b><br><small>${b.sub}</small>`)
 );
 
-function buildRows(items, containerId, dotClass) {
+function buildRows(items, containerId) {
   const container = document.getElementById(containerId);
   items.forEach(item => {
     const row = document.createElement('div');
     row.className = 'marker-row';
     row.id = 'row-' + item.id;
     row.innerHTML = `
-      <div class="dot ${dotClass}" id="dot-${item.id}"></div>
+      <div class="dot blue" id="dot-${item.id}"></div>
       <div style="flex:1;min-width:0">
         <div class="marker-name">${item.name}</div>
         ${item.sub ? `<div class="marker-sub">${item.sub}</div>` : ''}
@@ -126,8 +113,7 @@ function buildRows(items, containerId, dotClass) {
     container.appendChild(row);
   });
 }
-buildRows(GPS_POINTS, 'list-gps', 'red');
-buildRows(BARS, 'list-bars', 'blue');
+buildRows(BARS, 'list-bars');
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371000;
@@ -142,23 +128,17 @@ function formatDist(m) {
   return m.toFixed(1) + ' m';
 }
 
-// --- Brukermarkør (Google Maps-stil) ---
 let userMarker = null;
 let userCircle = null;
 let centered   = false;
 let heading    = 0;
 
-// Selve SVG-markøren: kjegle + blå prikk
 function userMarkerHTML(deg) {
   return `
   <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"
        style="overflow:visible;transform:rotate(${deg}deg);transition:transform 0.25s ease;transform-origin:30px 30px">
-    <!-- Retningskjegle -->
     <path d="M30,30 L18,2 A20,20 0 0,1 42,2 Z" fill="rgba(66,133,244,0.3)" />
-    <!-- Nøyaktighetsring-effekt er egen L.circle -->
-    <!-- Hvit ring -->
     <circle cx="30" cy="30" r="12" fill="white" />
-    <!-- Blå prikk -->
     <circle cx="30" cy="30" r="9" fill="#4285F4" />
   </svg>`;
 }
@@ -171,14 +151,14 @@ const userIcon = (deg) => L.divIcon({
   popupAnchor: [0, -30],
 });
 
-function updateGroup(items, leafletMks, lat, lon, iconNormal, iconGreen, dotNormal) {
-  items.forEach((item, i) => {
+function updateBars(lat, lon) {
+  BARS.forEach((item, i) => {
     const dist = haversine(lat, lon, item.lat, item.lon);
     const reached = dist <= THRESHOLD;
-    leafletMks[i].setIcon(reached ? iconGreen : iconNormal);
+    barMarkers[i].setIcon(reached ? icons.barGreen : icons.barBlue);
     document.getElementById('dist-'+item.id).textContent = formatDist(dist);
     document.getElementById('dist-'+item.id).className = 'marker-dist' + (dist < 50 ? ' close' : '');
-    document.getElementById('dot-'+item.id).className  = 'dot ' + (reached ? 'green' : dotNormal);
+    document.getElementById('dot-'+item.id).className  = 'dot ' + (reached ? 'green' : 'blue');
     document.getElementById('row-'+item.id).className  = 'marker-row' + (reached ? ' reached' : '');
   });
 }
@@ -206,8 +186,7 @@ function onPosition(pos) {
     userCircle.setRadius(Math.max(accuracy, 5));
   }
 
-  updateGroup(GPS_POINTS, gpsMarkers, lat, lon, icons.gpsRed,  icons.gpsGreen, 'red');
-  updateGroup(BARS,       barMarkers, lat, lon, icons.barBlue, icons.barGreen, 'blue');
+  updateBars(lat, lon);
 }
 
 function onError(err) {
@@ -232,7 +211,6 @@ if ('geolocation' in navigator) {
   document.getElementById('gps-dot').className = 'error';
 }
 
-// --- Retning fra gyro (roterer SVG direkte) ---
 function handleOrientation(e) {
   let h = null;
   if (typeof e.webkitCompassHeading === 'number') {
@@ -242,7 +220,6 @@ function handleOrientation(e) {
   }
   if (h === null) return;
   heading = Math.round(h);
-  // Oppdater SVG-rotasjon direkte i DOM — ingen re-render av markør
   const svg = userMarker && userMarker.getElement()
     ? userMarker.getElement().querySelector('svg')
     : null;
@@ -254,7 +231,6 @@ function startOrientation() {
   window.addEventListener('deviceorientation', handleOrientation, true);
 }
 
-// iOS: be om tillatelse ved første touch (kreves av iOS 13+)
 if (typeof DeviceOrientationEvent !== 'undefined' &&
     typeof DeviceOrientationEvent.requestPermission === 'function') {
   document.addEventListener('touchstart', function req() {
