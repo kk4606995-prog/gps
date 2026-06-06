@@ -18,7 +18,7 @@
   #header { background: #1a1d27; border-bottom: 1px solid #2d3148; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
   #header h1 { font-size: 15px; font-weight: 600; color: #f1f5f9; }
   #gps-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #94a3b8; }
-  #gps-dot { width: 8px; height: 8px; border-radius: 50%; background: #6b7280; transition: background 0.4s; flex-shrink:0; }
+  #gps-dot { width: 8px; height: 8px; border-radius: 50%; background: #6b7280; transition: background 0.4s; flex-shrink: 0; }
   #gps-dot.active { background: #22c55e; box-shadow: 0 0 6px #22c55e88; animation: blink 1.8s ease-in-out infinite; }
   #gps-dot.error { background: #ef4444; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -41,41 +41,6 @@
   .reached .badge { display: inline-block; }
   #accuracy-bar { padding: 6px 16px; font-size: 11px; color: #64748b; border-top: 1px solid #2d3148; }
   #error-msg { display: none; background: #1f1010; border: 1px solid #7f1d1d; color: #fca5a5; font-size: 13px; padding: 12px 16px; margin: 10px; border-radius: 8px; line-height: 1.6; }
-
-  /* Google Maps-stil brukermarkør */
-  .user-marker-wrap {
-    position: relative;
-    width: 80px; height: 80px;
-    transform-origin: 50% 50%;
-    transition: transform 0.25s ease;
-  }
-  .user-cone {
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 0; height: 0;
-    border-left: 22px solid transparent;
-    border-right: 22px solid transparent;
-    border-bottom: 46px solid rgba(66,133,244,0.25);
-    filter: blur(2px);
-  }
-  .user-dot-outer {
-    position: absolute;
-    bottom: 12px; left: 50%;
-    transform: translateX(-50%);
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: white;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  }
-  .user-dot-inner {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: #4285F4;
-  }
-
-
 </style>
 </head>
 <body>
@@ -99,23 +64,21 @@
   <div id="accuracy-bar">Nøyaktighet: —</div>
 </div>
 
-
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const GPS_POINTS = [
-  { id: "g1", name: "Punkt 1", lat: 61.117189391299775, lon: 10.464565025004918 },
-  { id: "g2", name: "Punkt 2", lat: 61.117226018834366, lon: 10.46634523282882  },
-  { id: "g3", name: "Punkt 3", lat: 61.11486228921843,  lon: 10.464810138284342 },
+  { id:"g1", name:"Punkt 1", lat:61.117189391299775, lon:10.464565025004918 },
+  { id:"g2", name:"Punkt 2", lat:61.117226018834366, lon:10.46634523282882  },
+  { id:"g3", name:"Punkt 3", lat:61.11486228921843,  lon:10.464810138284342 },
 ];
 const BARS = [
-  { id: "b1", name: "Heim Lillehammer",    sub: "Gastropub · Storgata 84",   lat: 61.117152, lon: 10.464584 },
-  { id: "b2", name: "Kjøpstaden Sport bar",sub: "Sportsbar · Storgata 83",   lat: 61.117338, lon: 10.465323 },
-  { id: "b3", name: "1847 Brenneriet",     sub: "Nattklubb · Elvegata 19",   lat: 61.117172, lon: 10.466530 },
-  { id: "b4", name: "Toppen Skybar",       sub: "Skybar · Elvegata 12",      lat: 61.117212, lon: 10.462206 },
-  { id: "b5", name: "Paddy's",             sub: "Bar · Storgata 93",         lat: 61.118323, lon: 10.464092 },
-  { id: "b6", name: "Haakons Pub",         sub: "Pub · Storgata 95",         lat: 61.118503, lon: 10.463915 },
-  { id: "b7", name: "Wiese",               sub: "Bar/konsert · Storgata 31", lat: 61.113027, lon: 10.468077 },
+  { id:"b1", name:"Heim Lillehammer",     sub:"Gastropub · Storgata 84",    lat:61.117152, lon:10.464584 },
+  { id:"b2", name:"Kjøpstaden Sport bar", sub:"Sportsbar · Storgata 83",    lat:61.117338, lon:10.465323 },
+  { id:"b3", name:"1847 Brenneriet",      sub:"Nattklubb · Elvegata 19",    lat:61.117172, lon:10.466530 },
+  { id:"b4", name:"Toppen Skybar",        sub:"Skybar · Elvegata 12",       lat:61.117212, lon:10.462206 },
+  { id:"b5", name:"Paddy's",              sub:"Bar · Storgata 93",          lat:61.118323, lon:10.464092 },
+  { id:"b6", name:"Haakons Pub",          sub:"Pub · Storgata 95",          lat:61.118503, lon:10.463915 },
+  { id:"b7", name:"Wiese",               sub:"Bar/konsert · Storgata 31",  lat:61.113027, lon:10.468077 },
 ];
 const THRESHOLD = 25;
 
@@ -145,7 +108,6 @@ const barMarkers = BARS.map(b =>
   L.marker([b.lat, b.lon], { icon: icons.barBlue }).addTo(map).bindPopup(`<b>${b.name}</b><br><small>${b.sub}</small>`)
 );
 
-// Bygg UI-rader
 function buildRows(items, containerId, dotClass) {
   const container = document.getElementById(containerId);
   items.forEach(item => {
@@ -165,7 +127,7 @@ function buildRows(items, containerId, dotClass) {
   });
 }
 buildRows(GPS_POINTS, 'list-gps', 'red');
-buildRows(BARS,       'list-bars', 'blue');
+buildRows(BARS, 'list-bars', 'blue');
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371000;
@@ -180,76 +142,35 @@ function formatDist(m) {
   return m.toFixed(1) + ' m';
 }
 
-// --- Google Maps-stil brukermarkør ---
-let userMarker  = null;
-let userCircle  = null;
-let userEl      = null;
-let centered    = false;
-let currentLat  = null;
-let currentLon  = null;
-let currentHeading = null;
+// --- Brukermarkør (Google Maps-stil) ---
+let userMarker = null;
+let userCircle = null;
+let centered   = false;
+let heading    = 0;
 
-function createUserMarker(lat, lon) {
-  // HTML-element som roterer
-  const html = `
-    <div class="user-marker-wrap" id="user-wrap">
-      <div class="user-cone" id="user-cone"></div>
-      <div class="user-dot-outer">
-        <div class="user-dot-inner"></div>
-      </div>
-    </div>`;
-
-  const icon = L.divIcon({
-    className: '',
-    html: html,
-    iconSize: [80, 80],
-    iconAnchor: [40, 62],  // ankret midt i den blå prikken
-    popupAnchor: [0, -62],
-  });
-
-  userMarker = L.marker([lat, lon], { icon, zIndexOffset: 1000 })
-    .addTo(map)
-    .bindPopup('📍 Du er her');
-
-  userEl = document.getElementById('user-wrap');
+// Selve SVG-markøren: kjegle + blå prikk
+function userMarkerHTML(deg) {
+  return `
+  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"
+       style="overflow:visible;transform:rotate(${deg}deg);transition:transform 0.25s ease;transform-origin:30px 30px">
+    <!-- Retningskjegle -->
+    <path d="M30,30 L18,2 A20,20 0 0,1 42,2 Z" fill="rgba(66,133,244,0.3)" />
+    <!-- Nøyaktighetsring-effekt er egen L.circle -->
+    <!-- Hvit ring -->
+    <circle cx="30" cy="30" r="12" fill="white" />
+    <!-- Blå prikk -->
+    <circle cx="30" cy="30" r="9" fill="#4285F4" />
+  </svg>`;
 }
 
-function rotateUserMarker(heading) {
-  if (!userEl) return;
-  userEl.style.transform = `rotate(${heading}deg)`;
-}
+const userIcon = (deg) => L.divIcon({
+  className: '',
+  html: userMarkerHTML(deg),
+  iconSize: [60, 60],
+  iconAnchor: [30, 30],
+  popupAnchor: [0, -30],
+});
 
-// --- Kompass / orientering ---
-function handleOrientation(e) {
-  let heading = null;
-  if (typeof e.webkitCompassHeading === 'number') {
-    heading = e.webkitCompassHeading; // iOS
-  } else if (e.absolute && e.alpha !== null) {
-    heading = (360 - e.alpha) % 360;  // Android absolutt
-  } else if (e.alpha !== null) {
-    heading = (360 - e.alpha) % 360;
-  }
-  if (heading === null) return;
-  currentHeading = Math.round(heading);
-  rotateUserMarker(currentHeading);
-}
-
-function startOrientation() {
-  window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-  window.addEventListener('deviceorientation', handleOrientation, true);
-}
-
-
-
-
-if (typeof DeviceOrientationEvent !== 'undefined' &&
-    typeof DeviceOrientationEvent.requestPermission === 'function') {
-  document.getElementById('ios-btn').style.display = 'block';
-} else {
-  startOrientation();
-}
-
-// --- GPS posisjon ---
 function updateGroup(items, leafletMks, lat, lon, iconNormal, iconGreen, dotNormal) {
   items.forEach((item, i) => {
     const dist = haversine(lat, lon, item.lat, item.lon);
@@ -264,8 +185,6 @@ function updateGroup(items, leafletMks, lat, lon, iconNormal, iconGreen, dotNorm
 
 function onPosition(pos) {
   const { latitude: lat, longitude: lon, accuracy } = pos.coords;
-  currentLat = lat; currentLon = lon;
-
   document.getElementById('gps-dot').className = 'active';
   document.getElementById('gps-text').textContent = 'GPS aktiv';
   document.getElementById('accuracy-bar').textContent =
@@ -274,18 +193,17 @@ function onPosition(pos) {
   if (!centered) { map.setView([lat, lon], 17); centered = true; }
 
   if (!userMarker) {
-    // Nøyaktighetsring
     userCircle = L.circle([lat, lon], {
-      radius: Math.max(accuracy, 3),
+      radius: Math.max(accuracy, 5),
       color: '#4285F4', weight: 1,
-      fillColor: '#4285F4', fillOpacity: 0.12
+      fillColor: '#4285F4', fillOpacity: 0.1
     }).addTo(map);
-    createUserMarker(lat, lon);
+    userMarker = L.marker([lat, lon], { icon: userIcon(heading), zIndexOffset: 1000 })
+      .addTo(map).bindPopup('Du er her');
   } else {
     userMarker.setLatLng([lat, lon]);
     userCircle.setLatLng([lat, lon]);
-    userCircle.setRadius(Math.max(accuracy, 3));
-    userEl = document.getElementById('user-wrap');
+    userCircle.setRadius(Math.max(accuracy, 5));
   }
 
   updateGroup(GPS_POINTS, gpsMarkers, lat, lon, icons.gpsRed,  icons.gpsGreen, 'red');
@@ -297,12 +215,12 @@ function onError(err) {
   const errMsg = document.getElementById('error-msg');
   errMsg.style.display = 'block';
   const msgs = {
-    1: '⚠️ <b>Tilgang nektet.</b> Klikk på 🔒 i adressefeltet → Lokasjon → Tillat.',
-    2: '⚠️ <b>Posisjon utilgjengelig.</b> Sjekk at GPS er på.',
-    3: '⚠️ <b>Tidsavbrudd.</b> Sørg for at lokasjon er tillatt.'
+    1:'⚠️ <b>Tilgang nektet.</b> Klikk på 🔒 → Lokasjon → Tillat, og last siden på nytt.',
+    2:'⚠️ <b>Posisjon utilgjengelig.</b> Sjekk at GPS er på.',
+    3:'⚠️ <b>Tidsavbrudd.</b> Sørg for at lokasjon er tillatt i nettleseren.'
   };
   document.getElementById('gps-text').textContent = ['','Nektet','Utilgjengelig','Tidsavbrudd'][err.code]||'Feil';
-  errMsg.innerHTML = msgs[err.code] || '⚠️ GPS-feil.';
+  errMsg.innerHTML = msgs[err.code]||'⚠️ GPS-feil.';
 }
 
 if ('geolocation' in navigator) {
@@ -313,11 +231,45 @@ if ('geolocation' in navigator) {
   document.getElementById('gps-text').textContent = 'Støttes ikke';
   document.getElementById('gps-dot').className = 'error';
 }
+
+// --- Retning fra gyro (roterer SVG direkte) ---
+function handleOrientation(e) {
+  let h = null;
+  if (typeof e.webkitCompassHeading === 'number') {
+    h = e.webkitCompassHeading;
+  } else if (e.alpha !== null) {
+    h = (360 - e.alpha) % 360;
+  }
+  if (h === null) return;
+  heading = Math.round(h);
+  // Oppdater SVG-rotasjon direkte i DOM — ingen re-render av markør
+  const svg = userMarker && userMarker.getElement()
+    ? userMarker.getElement().querySelector('svg')
+    : null;
+  if (svg) svg.style.transform = `rotate(${heading}deg)`;
+}
+
+function startOrientation() {
+  window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+  window.addEventListener('deviceorientation', handleOrientation, true);
+}
+
+// iOS: be om tillatelse ved første touch (kreves av iOS 13+)
+if (typeof DeviceOrientationEvent !== 'undefined' &&
+    typeof DeviceOrientationEvent.requestPermission === 'function') {
+  document.addEventListener('touchstart', function req() {
+    DeviceOrientationEvent.requestPermission()
+      .then(s => { if (s === 'granted') startOrientation(); })
+      .catch(() => {});
+    document.removeEventListener('touchstart', req);
+  }, { once: true });
+} else {
+  startOrientation();
+}
 </script>
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/gps/sw.js")
-    .catch(e => console.log("SW error", e));
+  navigator.serviceWorker.register("/gps/sw.js").catch(() => {});
 }
 </script>
 </body>
