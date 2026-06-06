@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPS Markør Tracker</title>
+<title>GPS Tracker Lillehammer</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a1d27">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GPS Tracker">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -225,6 +232,13 @@ if ('geolocation' in navigator) {
 } else {
   document.getElementById('gps-text').textContent = 'Geolokasjon støttes ikke';
   document.getElementById('gps-dot').className = 'error';
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/gps/sw.js")
+    .then(() => console.log("SW registered"))
+    .catch(e => console.log("SW error", e));
 }
 </script>
 </body>
